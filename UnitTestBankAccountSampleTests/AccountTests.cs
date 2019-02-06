@@ -11,22 +11,42 @@ namespace UnitTestBankAccountSample.Tests
     [TestClass()]
     public class AccountTests
     {
+        private Account acc;
+
+        [TestInitialize] //This is an Attribute, Run this before every single test
+        public void TestInit()
+        {
+            acc = new Account("JOE");
+            //Give account starting balance
+            acc.Deposit(100);
+        }
+
         [TestMethod()]
         public void Withdraw_ValidAmmount_FromBalance()
         {
             //AAA Pattern (Arrange, Act, Assert)
             //Arrange
-            Account acc = new Account("Joe98499");
-            double startingBalance = 100;
+            double startingBalance = acc.Balance;
             double withdrawAmount = 10;
             double expected = startingBalance - withdrawAmount;
-            acc.Deposit(startingBalance);
 
             //Act
             acc.Withdraw(withdrawAmount);
 
             //Assert
             Assert.AreEqual(expected, acc.Balance);
+        }
+
+        [TestMethod]
+        //[ExpectedException(typeof(ArgumentException))]
+        //DO NOT USE ExpectedException
+        public void Withdraw_NegativeAmount_ThrowsArgumentException()
+        {
+            //Arrange
+            double withdrawAmount = -5;
+
+            //Assert => Act
+            Assert.ThrowsException<ArgumentException>(() => acc.Withdraw(withdrawAmount));
         }
     }
 }

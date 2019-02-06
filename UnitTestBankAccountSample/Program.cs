@@ -10,7 +10,18 @@ namespace UnitTestBankAccountSample
     {
         static void Main(string[] args)
         {
-            //Account acc = new Account("123");
+            Account acc = new Account("abc");
+            try
+            {
+                acc.Withdraw(-10);
+            }
+            catch (ArgumentException ae)
+            {
+
+                Console.WriteLine("I'm sorry, the amount you entered is not valid");
+            }
+            Console.ReadLine();
+            
         }
     }
 }
