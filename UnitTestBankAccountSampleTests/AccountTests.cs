@@ -12,29 +12,46 @@ namespace UnitTestBankAccountSample.Tests
     public class AccountTests
     {
         private Account acc;
+        private const double initialBalance = 100;
 
         [TestInitialize] //This is an Attribute, Run this before every single test
         public void TestInit()
         {
             acc = new Account("JOE");
             //Give account starting balance
-            acc.Deposit(100);
+            acc.Deposit(initialBalance);
         }
 
         [TestMethod()]
-        public void Withdraw_ValidAmmount_FromBalance()
+        [DataRow(10)]
+        [DataRow(initialBalance)] //Withdraw all funds
+        [DataRow(1.55)]
+        [TestCategory("Withdraw")]
+        public void Withdraw_ValidAmmount_FromBalance(double withdrawAmount)
         {
             //AAA Pattern (Arrange, Act, Assert)
             //Arrange
             double startingBalance = acc.Balance;
-            double withdrawAmount = 10;
             double expected = startingBalance - withdrawAmount;
 
             //Act
-            acc.Withdraw(withdrawAmount);
+            double newBalance = acc.Withdraw(withdrawAmount);
 
             //Assert
             Assert.AreEqual(expected, acc.Balance);
+            Assert.AreEqual(expected, newBalance);
+        }
+
+        [TestMethod]
+        [DataRow(initialBalance + 1)] //Overdrawing by $1
+        [DataRow(10000.01)] //Exceeding the limit
+        [TestCategory("Withdraw")]
+        public void Withdraw_InvalidAmount_FromBalance(double withdrawAmount)
+        {
+            //Arrange
+
+            //Asser => Act
+            Assert.ThrowsException<ArgumentException>(() => acc.Withdraw(withdrawAmount));
         }
 
         [TestMethod]
@@ -47,6 +64,26 @@ namespace UnitTestBankAccountSample.Tests
 
             //Assert => Act
             Assert.ThrowsException<ArgumentException>(() => acc.Withdraw(withdrawAmount));
+        }
+
+        [TestMethod]
+        [DataRow("JOE")]
+        [DataRow("1234567890123")]
+        [TestCategory("Constructors")]
+        [Priority(1)]
+        public void ConstructAccount_WithValidId(string accountNo)
+        {
+            Account myAcc = new Account(accountNo);
+            Assert.AreEqual(accountNo, myAcc.AccountNumber);
+        }
+
+        [TestMethod]
+        [DataRow("    ")]
+        [DataRow(null)]
+        [DataRow("                                                 ")]
+        public void ConstructAccount_WithInvalidId_ThrowsArgumentException(string accNo)
+        {
+            Assert.ThrowsException<ArgumentException>(() => new Account(accNo));
         }
     }
 }

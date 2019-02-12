@@ -11,8 +11,15 @@ namespace UnitTestBankAccountSample
     /// </summary>
     public class Account
     {
+        private const double MaximumWithdrawAmount = 10000;
+
         public Account(string accNum)
         {
+            if (string.IsNullOrWhiteSpace(accNum))
+            {
+                throw new ArgumentException($"{nameof(accNum)} cannot be null or whitespace");
+            }
+
             AccountNumber = accNum;
         }
 
@@ -33,6 +40,16 @@ namespace UnitTestBankAccountSample
             if (amt <= 0)
             {
                 throw new ArgumentException($"{nameof(amt)} Must be positive!");
+            }
+
+            if (amt > Balance)
+            {
+                throw new ArgumentException("Overdrafting is not allowed!");
+            }
+
+            if (amt > MaximumWithdrawAmount)
+            {
+                throw new ArgumentException($"Withdraw amount cannot exceed {MaximumWithdrawAmount}");
             }
             //Ensure there is money to be withdrawn
             //Add a limit to withdrawl
