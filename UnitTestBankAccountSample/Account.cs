@@ -12,6 +12,8 @@ namespace UnitTestBankAccountSample
     public class Account
     {
         private const double MaximumWithdrawAmount = 10000;
+        private const double MaximumDepositAmount = 5000;
+        private const double MinimumDepositAmount = 100;
 
         public Account(string accNum)
         {
@@ -60,12 +62,27 @@ namespace UnitTestBankAccountSample
         }
 
         /// <summary>
-        /// Deposites a specified amount to this bank account
+        /// Deposits a specified amount to this bank account
         /// </summary>
         /// <param name="amt">The amount to deposit</param>
         /// <returns>Returns the new balance</returns>
         public double Deposit(double amt)
         {
+            if (amt <= 0)
+            {
+                throw new ArgumentException($"{nameof(amt)} Must be positive!");
+            }
+
+            if (amt > MaximumDepositAmount)
+            {
+                throw new ArgumentException($"Deposit amount cannot exceed {MaximumDepositAmount}");
+            }
+
+            if (amt < MinimumDepositAmount)
+            {
+                throw new ArgumentException($"Deposit amount must be greater than {MinimumDepositAmount}");
+            }
+
             Balance += amt;
             return Balance;
         }

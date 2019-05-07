@@ -50,7 +50,7 @@ namespace UnitTestBankAccountSample.Tests
         {
             //Arrange
 
-            //Asser => Act
+            //Assert => Act
             Assert.ThrowsException<ArgumentException>(() => acc.Withdraw(withdrawAmount));
         }
 
@@ -84,6 +84,51 @@ namespace UnitTestBankAccountSample.Tests
         public void ConstructAccount_WithInvalidId_ThrowsArgumentException(string accNo)
         {
             Assert.ThrowsException<ArgumentException>(() => new Account(accNo));
+        }
+
+        [TestMethod]
+        [DataRow(initialBalance )]
+        [DataRow(100)]
+        [DataRow(5000)]
+        [TestCategory("Deposit")]
+        public void Deposit_ValidAmount(double depositAmount)
+        {
+            double startingBalance = acc.Balance;
+            double expected = startingBalance + depositAmount;
+
+            double newBalance = acc.Deposit(depositAmount);
+
+            Assert.AreEqual(expected, acc.Balance);
+            Assert.AreEqual(expected, newBalance);
+        }
+
+        [TestMethod]
+        [TestCategory("Deposit")]
+        public void Deposit_NegativeAmount_ThrowsArgumentException()
+        {
+            //Arrange
+            double depositeAmount = -1;
+
+            //Assert => Act
+            Assert.ThrowsException<ArgumentException>(() => acc.Deposit(depositeAmount));
+        }
+
+        [TestMethod]
+        [DataRow(5001)]
+        [TestCategory("Deposit")]
+        public void Deposit_OverMaximumAmount_ToBalance(double depositAmount)
+        {
+            //Assert => Act
+            Assert.ThrowsException<ArgumentException>(() => acc.Deposit(depositAmount));
+        }
+
+        [TestMethod]
+        [DataRow(99)]
+        [TestCategory("Deposit")]
+        public void Deposit_UnderMinimumAmout_ToBalance(double depositAmount)
+        {
+            //Assert => Act
+            Assert.ThrowsException<ArgumentException>(() => acc.Deposit(depositAmount));
         }
     }
 }
